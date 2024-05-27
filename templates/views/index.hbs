@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form id="registerForm" action="/register" method="POST">
+                <h1>Create Account</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+                <input type="text" name="name" placeholder="Name" />
+                <input type="email" name="email" placeholder="Email" />
+                <input type="password" name="password" placeholder="Password" />
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form id="loginForm" action="/login" method="POST">
+                <h1>Sign in</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+                <input type="email" name="email" placeholder="Email" />
+                <input type="password" name="password" placeholder="Password" />
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your personal details and start journey with us</p>
+                    <button class="ghost" id="signUp">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            &copy; 2024 Ishan Singh Chouhan. All rights reserved. Designed by Ishan Singh Chouhan.
+        </p>
+    </footer>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                password: formData.get('password')
+            };
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show success notification
+                    showNotification("You have successfully signed up! Now you can go for signing in.");
+
+                    // Automatically click the sign-in button to go to the sign-in section
+                    signInButton.click();
+                } else {
+                    alert('Registration failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('An error occurred: ' + error.message);
+            }
+        });
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.textContent = '';
+                notification.classList.remove('show');
+            }, 10000); // Remove notification after 3 seconds
+        }
+    </script>
+</body>
+
+</html>
